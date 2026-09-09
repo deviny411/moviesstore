@@ -34,6 +34,9 @@
         <hr />
         <ul class="list-group">
           {% for review in template_data.reviews %}
+          {% if review.id not in template_data.reviewsReports %}
+        
+          
           <li class="list-group-item pb-3 pt-3">
             <h5 class="card-title">
               Review by {{ review.user.username }}
@@ -42,6 +45,10 @@
               {{ review.date }}
             </h6>
             <p class="card-text">{{ review.comment }}</p>
+            {% if user.is_authenticated and user != review.user%}
+            <a class="btn btn-danger" href="{% url 'movies.report_review' id=template_data.movie.id review_id=review.id %}">Report
+            </a>
+            {% endif %}
             {% if user.is_authenticated and user == review.user %}
             <a class="btn btn-primary" href="{% url 'movies.edit_review' id=template_data.movie.id review_id=review.id %}">Edit
             </a>
@@ -49,8 +56,10 @@
             </a>
             {% endif %}
           </li>
+          {% endif %}
           {% endfor %}
         </ul>
+        
         {% if user.is_authenticated %}
         <div class="container mt-4">
           <div class="row justify-content-center">

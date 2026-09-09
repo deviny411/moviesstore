@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Movie, Review
+from .models import Movie, Review, Report
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -42,10 +42,19 @@ def index(request):
 def show(request, id):
     movie = Movie.objects.get(id=id)
     reviews = Review.objects.filter(movie=movie)
+    reviewsReports = set()
+    for review in reviews:
+        reports = Report.objects.filter(review = review)
+        if(len(reports) >0):
+            reviewsReports.add(review.id)
+    
+    
+
     template_data = {}
     template_data['title'] = movie.name
     template_data['movie'] = movie
     template_data['reviews'] = reviews
+    template_data['reviewsReports'] = reviewsReports
     return render(request, 'movies/show.html',
                   {'template_data': template_data})
 
@@ -59,5 +68,28 @@ def create_review(request, id):
         review.user = request.user
         review.save()
         return redirect('movies.show', id=id)
+    else:
+        return redirect('movies.show', id=id)
+
+
+@login_required
+def report_review(request, id, review_id):
+    movie = Movie.objects.get(id=id)
+    review = get_object_or_404(Review, id=review_id)
+    if request.method == 'POST' and request.POST['comment']!= '':
+        review = Review.objects.get(id=review_id)
+        report = Report()
+        report.comment = request.POST['comment']
+        report.review = review
+
+        report.user = request.user
+        
+        report.save()
+        return redirect('movies.show', id=id)
+    elif request.method == 'GET':
+            template_data = {}
+            template_data['review'] = review
+            template_data['movie'] = movie
+            return render(request, 'movies/report.html', {'template_data': template_data})
     else:
         return redirect('movies.show', id=id)
