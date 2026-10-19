@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Movie, Review, Report, Rating
+from .models import Movie, Review, Report
 from django.contrib.auth.decorators import login_required
-from django.db.models import Avg
 
 @login_required
 def edit_review(request, id, review_id):
@@ -48,12 +47,7 @@ def show(request, id):
         reports = Report.objects.filter(review = review)
         if(len(reports) >0):
             reviewsReports.add(review.id)
-    ratings = Rating.objects.filter(movie=movie)
-    averageRating = ratings.aggregate(Avg('stars'))['stars__avg']
-    userRating = None
-    userRatings = Rating.objects.filter(movie=movie, user=request.user.id)
-    if len(userRatings) > 0:
-        userRating = userRatings[0].stars
+    
     
 
     template_data = {}
@@ -61,9 +55,6 @@ def show(request, id):
     template_data['movie'] = movie
     template_data['reviews'] = reviews
     template_data['reviewsReports'] = reviewsReports
-    template_data['average_rating'] = averageRating
-    template_data['rating_count'] = len(ratings)
-    template_data['user_rating'] = userRating
     return render(request, 'movies/show.html',
                   {'template_data': template_data})
 
@@ -80,22 +71,6 @@ def create_review(request, id):
     else:
         return redirect('movies.show', id=id)
 
-@login_required
-def rate_movie(request, id):
-    if request.method == 'POST' and request.POST['stars']!= '':
-        movie = Movie.objects.get(id=id)
-        userRatings = Rating.objects.filter(movie=movie, user=request.user)
-        if len(userRatings) > 0:
-            rating = userRatings[0]
-        else:
-            rating = Rating()
-            rating.movie = movie
-            rating.user = request.user
-        rating.stars = int(request.POST['stars'])
-        rating.save()
-        return redirect('movies.show', id=id)
-    else:
-        return redirect('movies.show', id=id)
 
 @login_required
 def report_review(request, id, review_id):

@@ -9,30 +9,6 @@
         <hr />
         <p><b>Description:</b> {{template_data.movie.description }}</p>
         <p><b>Price:</b> ${{template_data.movie.price }}</p>
-        <p><b>Average Rating:</b> {{ template_data.average_rating }}
-          ({{ template_data.rating_count }} ratings)</p>
-        <p><b>Current User Rating:</b> {{ template_data.user_rating }}</p>
-        {% if user.is_authenticated %}
-          <form method="post"
-            action="{% url 'movies.rate_movie' id=template_data.movie.id %}">
-            <div class="row">
-              {% csrf_token %}
-              <div class="col-auto">
-                <div class="input-group col-auto">
-                  <div class="input-group-text">Ratings (1-5 Stars)
-                    </div>
-                  <input type="number" min="1" max="5"
-                    class="form-control quantity-input"
-                    name="stars" value="1">
-                </div>
-              </div>
-              <div class="col-auto">
-                <button class="btn bg-dark text-white"
-                  type="submit">Rate</button>
-              </div>
-            </div>
-          </form>
-        {% endif %}
         <p class="card-text">
           <form method="post"
             action="{% url 'cart.add' id=template_data.movie.id %}">
