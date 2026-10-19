@@ -1,0 +1,16 @@
+{% extends 'admin/base_site.html' %}
+{% block content %}
+
+<table>
+    <tr>
+        <th>Most Bought</th>
+        <td>{{ mostBought.name }}</td>
+        <td>{{ mostBought.x }}</td>
+    </tr>
+    <tr>
+        <th>Most Reviewed</th>
+        <td>{{ mostReviewed.name }}</td>
+        <td>{{ mostReviewed.x }}</td>
+    </tr>
+</table>
+{% endblock %}

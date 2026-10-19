@@ -46,3 +46,7 @@ class Rating(models.Model):
 class TopReviewer(User):
     class Meta:
         proxy = True
+
+class MostPopularMovie(User):
+    class Meta:
+        proxy = True
