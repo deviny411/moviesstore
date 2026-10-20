@@ -24,3 +24,7 @@ class Item(models.Model):
 class TopPurchaser(User):
     class Meta:
         proxy = True
+
+class ListTopPurchasers(User):
+    class Meta:
+        proxy = True
